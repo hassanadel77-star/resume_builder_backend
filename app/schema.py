@@ -22,7 +22,7 @@ class WorkExperienceSchema(Schema):
     title = fields.String(required=True)
 
 class WorkExperienceListSchema(Schema):
-    work_experience = fields.Nested(WorkExperienceSchema)
+    work_experiences = fields.Nested(WorkExperienceSchema,many=True)
 
 class EducationSchema(Schema):
     institution = fields.String(required=True,validate=Length(min=1,max=355))
@@ -32,7 +32,7 @@ class EducationSchema(Schema):
     programe = fields.String(required=True)
 
 class EducationListSchema(Schema):
-    education = fields.Nested(EducationSchema)
+    educations = fields.Nested(EducationSchema,many=True)
 
 class CertificateSchema(Schema):
     certification = fields.String(required=True,validate=Length(min=1,max=355))
@@ -41,4 +41,4 @@ class CertificateSchema(Schema):
     organization = fields.String(required=True)
 
 class CertificateListSchema(Schema):
-    certificates = fields.Nested(CertificateSchema)
+    certificates = fields.Nested(CertificateSchema,many=True)

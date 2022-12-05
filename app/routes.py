@@ -53,17 +53,16 @@ def token_required(f):
 @application.route('/register', methods=["POST"])
 def register():
     data = request.get_json()
-
-    print("----------------------------")
-    print(data)
-    print("----------------------------")
-
     validation_schema = UserSchema()
     try:
         validation_schema.load(data)
     except Exception as ex:
         return jsonify({'message':str(ex)}),400
 
+    user = session.query(Accounts).filter(or_(Accounts.username == data.get("username") , Accounts.email==data.get("email"))).first()
+    if user:
+        return jsonify({'message':"User exists"}),400
+        
     password_hash =  generate_password_hash(data['password'], method='sha256')
     account = Table('account', metadata, autoload=True)
     engine.execute(account.insert(), username=data.get("username"),
@@ -113,11 +112,12 @@ def add_basic_info(current_user):
 @token_required
 def add_work_experience(current_user):
     data = request.get_json()
+    print(data)
     validation_schema = WorkExperienceListSchema()
     try:
         validation_schema.load(data)
     except Exception as ex:
-        return jsonify({'message':str(ex)})
+        return jsonify({'message': str(ex)}),400
 
     resume_table = Table('resume', metadata, autoload=True)    
     resume = session.query(Resume).filter_by(public_id=current_user.public_id).first()
@@ -140,7 +140,7 @@ def add_education(current_user):
     try:
         validation_schema.load(data)
     except Exception as ex:
-        return jsonify({'message':str(ex)})
+        return jsonify({'message':str(ex)}),400
 
     resume_table = Table('resume', metadata, autoload=True)    
     resume = session.query(Resume).filter_by(public_id=current_user.public_id).first()
@@ -163,7 +163,7 @@ def add_certificates(current_user):
     try:
         validation_schema.load(data)
     except Exception as ex:
-        return jsonify({'message':str(ex)})
+        return jsonify({'message':str(ex)}),400
 
     resume_table = Table('resume', metadata, autoload=True)    
     resume = session.query(Resume).filter_by(public_id=current_user.public_id).first()
@@ -191,7 +191,7 @@ def add_others(current_user):
         updated_resume.update({"others" : data})
         engine.execute(resume_table.update(), public_id=current_user.public_id,data = updated_resume)
 
-    return jsonify({"message" : "Certificates has been saved successfully"})
+    return jsonify({"message" : "Others  has been saved successfully"})
 
 
 @application.route('/resume', methods=["GET"])
