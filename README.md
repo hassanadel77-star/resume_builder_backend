@@ -1,4 +1,4 @@
-# Flask example
+# Resume builder backend
 
 Using Flask to build a Restful API Server with Swagger document.
 
